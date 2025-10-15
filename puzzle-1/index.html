@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo Bazaar - Your One-Stop Shop</title>
+    <style>
+        /* --- Basic Reset & Global Styles --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            background-color: #ffffff;
+            color: var(--dark-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* --- Header & Navigation --- */
+        .main-header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .logo a {
+            color: inherit; /* Inherit color from the parent */
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+        }
+
+        .main-nav ul li {
+            margin-left: 25px;
+        }
+
+        .main-nav ul li a {
+            color: var(--secondary-color);
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav ul li a:hover, .main-nav ul li a.active {
+            color: var(--primary-color);
+        }
+
+        .header-icons a {
+            font-size: 1.2rem;
+            margin-left: 20px;
+            color: var(--secondary-color);
+        }
+
+        .header-icons a:hover {
+            color: var(--primary-color);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            background: url("pic.png") center;
+            color: #fff;
+            height: 60vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- Featured Products Section --- */
+        .featured-products {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: var(--dark-color);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: left;
+            display: block; /* Make the card a block-level link */
+            color: inherit; /* Ensure text inside the link isn't blue */
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image {
+            background-color: var(--light-color);
+        }
+
+        .product-image img {
+            display: block;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+
+        .product-category {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background-color: var(--dark-color);
+            padding: 10px;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #23272b;
+        }
+
+        /* --- Footer --- */
+        .main-footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-column ul li a {
+            color: var(--light-color);
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-column ul li a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #495057;
+            font-size: 0.9rem;
+            color: var(--light-color);
+            opacity: 0.7;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .main-header .container {
+                flex-direction: column;
+            }
+            .main-nav {
+                margin-top: 1rem;
+            }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<!--FLAG:1M4635 4R3 5U5 4F-->
+    <header class="main-header">
+        <div class="container">
+            <h1 class="logo"><a href="index.html">Neo Bazaar</a></h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-icons">
+                 <a href="#">&#128269;</a> <a href="#">&#128100;</a> <a href="#">&#128722;</a> </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Discover Our New Collection</h1>
+                <p>High-quality products curated just for you. Style and substance combined.</p>
+                <a href="shop.html" class="btn">Shop Now</a>
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <div class="container">
+                <h2 class="section-title">Featured Products</h2>
+                <div class="product-grid">
+
+                    <a href="product.html" class="product-card">
+                        <div class="product-image">
+                            <img src="watch.png" alt="Smart Watch">
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Electronics</p>
+                            <h3 class="product-title">Premium Smart Watch</h3>
+                            <p class="product-price">$299.99</p>
+                            <button class="btn add-to-cart-btn">View Details</button>
+                        </div>
+                    </a>
+
+                    <a href="product.html" class="product-card">
+                        <div class="product-image">
+                            <img src="headphones.png" alt="Wireless Headphones">
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Electronics</p>
+                            <h3 class="product-title">Noise-Cancelling Headphones</h3>
+                            <p class="product-price">$199.00</p>
+                            <button class="btn add-to-cart-btn">View Details</button>
+                        </div>
+                    </a>
+
+                    <a href="product.html" class="product-card">
+                        <div class="product-image">
+                            <img src="sunglass.png" alt="Smart Sunglasses">
+                        </div>
+                        <div class="product-info">
+                            <p class="product-category">Accessories</p>
+                            <h3 class="product-title">Smart Sunglasses</h3>
+                            <p class="product-price">$89.99</p>
+                            <button class="btn add-to-cart-btn">View Details</button>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>About Neo Bazaar</h4>
+                    <p>We are committed to providing the best products with exceptional customer service. Explore our collection and find what you love.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="shop.html">Electronics</a></li>
+                        <li><a href="shop.html">Accessories</a></li>
+                        <li><a href="shop.html">Home Goods</a></li>
+                        <li><a href="shop.html">New Arrivals</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="https://stylesuxx.github.io/steganography/">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Neo Bazaar. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

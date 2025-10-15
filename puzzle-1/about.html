@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Neo Bazaar</title>
+    <style>
+        /* --- Basic Reset & Global Styles --- */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-family); line-height: 1.6; background-color: #ffffff; color: var(--dark-color); }
+        .container { max-width: 960px; margin: auto; padding: 0 20px; }
+
+        /* --- Header & Navigation --- */
+        .main-header { background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem 0; position: sticky; top: 0; z-index: 1000; }
+        .main-header .container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; }
+        .logo { font-size: 1.8rem; font-weight: 700; }
+        .logo a { color: var(--dark-color); text-decoration: none; }
+        .main-nav ul { list-style: none; display: flex; }
+        .main-nav ul li { margin-left: 25px; }
+        .main-nav ul li a { text-decoration: none; color: var(--secondary-color); font-weight: 600; }
+        .main-nav ul li a:hover, .main-nav ul li a.active { color: var(--primary-color); }
+        .header-icons a { font-size: 1.2rem; margin-left: 20px; color: var(--secondary-color); text-decoration: none; }
+
+        /* --- About Page Specific Styles --- */
+        .page-header { background-color: var(--light-color); padding: 2rem 0; text-align: center; margin-bottom: 3rem; }
+        .page-header h1 { font-size: 2.8rem; }
+        .about-content { padding: 2rem 0; }
+        .about-content h2 { font-size: 2rem; margin-bottom: 1rem; color: var(--primary-color); }
+        .about-content p { margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.8; }
+
+        /* --- FOOTER STYLES MODIFIED TO MATCH HOMEPAGE --- */
+        .main-footer { background-color: var(--dark-color); color: var(--light-color); padding: 3rem 0; margin-top: 4rem; }
+        .main-footer .container { max-width: 1200px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+        .footer-column h4 { font-size: 1.2rem; margin-bottom: 1rem; color: #fff; }
+        .footer-column p { color: var(--light-color); opacity: 0.8; }
+
+        /* ===== CSS CHANGES HERE ===== */
+        .footer-column ul {
+            list-style: none; /* No bullet points */
+        }
+        .footer-column ul li {
+             margin-bottom: 0.5rem;
+        }
+        .footer-column ul li a {
+            color: var(--light-color); /* Light grey links */
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+        }
+        .footer-column ul li a:hover {
+            opacity: 1; /* Fully opaque on hover */
+        }
+        /* ===== END OF CSS CHANGES ===== */
+
+        .footer-bottom { text-align: center; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #495057; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <h1 class="logo"><a href="index.html">Neo Bazaar</a></h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="shop.html">Shop</a></li>
+                    <li><a href="about.html" class="active">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+             <div class="header-icons">
+                 <a href="#">&#128269;</a> <a href="#">&#128100;</a> <a href="#">&#128722;</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>About Neo Bazaar</h1>
+            </div>
+        </section>
+        <section class="about-content">
+            <div class="container">
+                <h2>Our Story</h2>
+                <p>Founded in 2025, Neo Bazaar started with a simple idea: to make high-quality, beautifully designed products accessible to everyone. We noticed a gap in the market for goods that were both durable and stylish, without the inflated price tag. From a small workshop here in India, we've grown into a trusted online retailer, but our core values remain the same.</p>
+                <h2>Our Mission</h2> <!--Find the flag-->
+                <p>Creating innovative products that serve humanity is at the core of our purpose. In every design, we prioritize intuition and seamless user experience. Commitment to superior quality guides our selection process, ensuring lasting value. Always striving for excellence, we embrace sustainable practices in all operations. Dedicated to our customers, we provide unparalleled support and build lasting relationships. Advancing technology responsibly is our steadfast promise.
+
+Innovating for a better future, we believe in constant evolution and progress. Solutions we offer are meticulously crafted to meet modern needs.
+
+All our endeavors are fueled by a passion for discovery and improvement.
+
+Grounding our efforts in ethical production, we ensure fair and transparent processes. Harnessing cutting-edge research, we push the boundaries of what's possible. Outstanding customer satisfaction remains our ultimate benchmark. Shaping tomorrow's world through thoughtful design, we inspire change. Through dedication and vision, we strive to make a meaningful impact.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>About Neo Bazaar</h4>
+                    <p>We are committed to providing the best products with exceptional customer service. Explore our collection and find what you love.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="shop.html">Electronics</a></li>
+                        <li><a href="shop.html">Accessories</a></li>
+                        <li><a href="shop.html">Home Goods</a></li>
+                        <li><a href="shop.html">New Arrivals</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="https://stylesuxx.github.io/steganography/">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Neo Bazaar. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

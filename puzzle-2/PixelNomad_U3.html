@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/// USER_PROFILE: @NeonDrifter_AD ///</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Roboto+Mono:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            margin: 0;
+            background-color: #0d1117; /* Dark background */
+            color: #c9d1d9; /* Light grey text */
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        .header {
+            background-color: #161b22;
+            padding: 15px 30px;
+            border-bottom: 2px solid #00f0ff; /* Cyan glowing bottom border */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+        .header h1 {
+            font-family: 'Major Mono Display', monospace;
+            color: #ff007f; /* Vibrant magenta for title */
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.8);
+        }
+        .header nav a {
+            color: #00ff00; /* Neon green for nav links */
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+        .header nav a:hover {
+            color: #00f0ff; /* Cyan on hover */
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+        }
+
+        .profile-container {
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            gap: 25px;
+            max-width: 1400px;
+            margin: auto;
+        }
+        .profile-main {
+            width: 700px;
+        }
+        .profile-sidebar {
+            width: 350px; /* Wider sidebar for detailed info */
+        }
+        .card {
+            background-color: #161b22;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+            border: 1px solid #30363d;
+        }
+        .card h3 {
+            color: #00f0ff; /* Cyan headings */
+            border-bottom: 1px dashed #00f0ff;
+            padding-bottom: 8px;
+            margin-top: 0;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+            font-size: 1.2rem;
+        }
+
+        /* Profile Header Card */
+        .profile-header-card {
+            display: flex;
+            align-items: center;
+            flex-direction: column; /* Stack avatar and text */
+            text-align: center;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        .profile-header-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid #00f0ff; /* Stronger cyan border for main avatar */
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.7); /* Intense avatar glow */
+            margin-bottom: 20px;
+        }
+        .profile-header-card .username {
+            font-family: 'Major Mono Display', monospace;
+            color: #00ff00; /* Neon green username */
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+        }
+        .profile-header-card .alias {
+            color: #ff007f; /* Magenta alias */
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        .profile-header-card .status {
+            font-size: 0.9rem;
+            color: #c9d1d9;
+            margin-bottom: 20px;
+            display: block; /* Ensure it takes full width */
+        }
+        .profile-header-card .action-buttons button {
+            background-color: #ff007f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: bold;
+            box-shadow: 0 0 8px rgba(255, 0, 127, 0.7);
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+        .profile-header-card .action-buttons button:hover {
+            background-color: #e0006d;
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.9);
+        }
+        .profile-header-card .action-buttons button.secondary {
+            background-color: #0d1117;
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+        }
+        .profile-header-card .action-buttons button.secondary:hover {
+            background-color: #00f0ff;
+            color: #0d1117;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.9);
+        }
+
+        /* Bio & Data Logs */
+        .bio-card p {
+            margin-bottom: 15px;
+        }
+        .bio-card strong {
+            color: #00f0ff;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Skill Matrix */
+        .skill-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Responsive grid */
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .skill-chip {
+            background-color: #0d1117;
+            border: 1px solid #00ff00; /* Neon green border for skills */
+            color: #00ff00;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9em;
+            text-shadow: 0 0 4px rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+            transition: transform 0.2s;
+        }
+        .skill-chip:hover {
+            transform: translateY(-3px); /* Lift on hover */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+        }
+
+        /* Recent Activities & Connections */
+        .activity-item, .connection-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #30363d;
+        }
+        .activity-item:last-child, .connection-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .activity-item .icon {
+            font-size: 1.5rem;
+            color: #ff007f;
+            margin-right: 15px;
+            text-shadow: 0 0 5px rgba(255, 0, 127, 0.5);
+        }
+        .activity-item .details span, .connection-item .details span {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #65676b;
+        }
+        .activity-item .details strong {
+            color: #c9d1d9;
+        }
+        .connection-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #00f0ff;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+        .connection-item .details a {
+            color: #00ff00;
+            text-decoration: none;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.4);
+        }
+        .connection-item .details a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>/// CYBER-NEXUS ///</h1>
+        <nav>
+            <a href="index.html">FEED_STREAM</a>
+        </nav>
+    </header>
+
+    <div class="profile-container">
+
+        <main class="profile-main">
+
+            <div class="card profile-header-card">
+                <img src="PixelNomad_U3.png" alt="User Avatar">
+                <div class="username">@PixelNomad_U3</div>
+                <div class="alias"></div>
+                <span class="status">STATUS: UNKNOWN / GRID_ECHO</span>
+                <div class="action-buttons">
+                    <button>SEND_MESSAGE</button>
+                    <button class="secondary">FOLLOW_IDENTITY</button>
+                </div>
+            </div>
+
+            <div class="card bio-card">
+                <h3>[ BIOGRAPHY_LOG ]</h3>
+                <p>Digital Drifter and Visual Hacker specializing in data archaeology.</p>
+                <p><strong>Affiliations:</strong> Broken Signal</p>
+                <p><strong>Last Logged Location:</strong> Sector-7, Old Grid. </p>
+            </div>
+
+            <div class="card">
+                <h3>[ RECENT_ACTIVITY_STREAM ]</h3>
+                <div class="activity-item">
+                    <span class="icon">🔗</span>
+                    <div class="details">
+                        <strong>Uploaded new Project:</strong> <span>"Generative Art from Corrupted Data"</span>
+                        <span>CYCLE_5.15.01 @ 12:30z</span>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <span class="icon">🔗</span>
+                    <div class="details">
+                        <strong>Uploaded new Project:</strong> <span>"Glitch Art Series"</span>
+                        <span>CYCLE_6.25.01 @ 12:30z</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <aside class="profile-sidebar">
+            <div class="card">
+                <h3>[ SKILL_MATRIX ]</h3>
+                <div class="skill-matrix-grid">
+                    <div class="skill-chip">DATA_ARCHAEOLOGY</div>
+                    <div class="skill-chip">GLITCH_ARTISTRY</div>
+                    <div class="skill-chip">GENERATIVE_VISUALS</div>
+                    <div class="skill-chip">SHADER_PROGRAMMING</div>
+                    <div class="skill-chip">SIGNAL_HIJACKING</div>
+                    <div class="skill-chip">VISUAL_CODE_INJECTION</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>[ CONNECTED_IDENTITIES ]</h3>
+                <div class="connection-item">
+                    <img src="CodeSculptor_PS.png" alt="Connection Avatar">
+                    <div class="details">
+                        <a href="CodeSculptor_PS.html">@CodeSculptor_PS</a>
+                        <span>Developer / Architect</span>
+                    </div>
+                </div>
+                <div class="connection-item">
+                    <img src="NeonDrifter_AD.png" alt="Connection Avatar">
+                    <div class="details">
+                        <a href="NeonDrifter_AD.html">@NeonDrifter_AD</a>
+                        <span>Explorer / Archaeologist</span>
+                    </div>
+                </div>
+                <div class="connection-item">
+                    <img src="SynthWhisperer_BC.png" alt="Connection Avatar">
+                    <div class="details">
+                        <a href="SynthWhisperer_BC.html">@SynthWhisperer_BC</a>
+                        <span>Audio Artist / Performer</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+</body>
+</html>

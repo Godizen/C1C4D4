@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>/// CYBER-NEXUS ///</title>
+    <script> _0x1224 = 'FLAG' </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Roboto+Mono:wght@400;700&display=swap');
+        body {
+            font-family: 'Roboto Mono', monospace; /* Monospaced font for techy feel */
+            margin: 0;
+            background-color: #0d1117; /* Dark, almost black background */
+            color: #c9d1d9; /* Light grey text for contrast */
+            line-height: 1.5;
+            overflow-x: hidden; /* Prevent horizontal scroll from glowing elements */
+        }
+        .header {
+            background-color: #161b22; /* Slightly lighter dark background for header */
+            padding: 15px 30px;
+            border-bottom: 2px solid #00f0ff; /* Cyan glowing bottom border */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); /* Soft cyan glow */
+        }
+        .header h1 {
+            font-family: 'Major Mono Display', monospace; /* Distinct cyberpunk title font */
+            color: #ff007f; /* Vibrant magenta for the title */
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.8); /* Magenta text glow */
+        }
+        .search-bar input {
+            padding: 10px 15px;
+            border: 1px solid #00f0ff; /* Cyan border */
+            border-radius: 5px;
+            background-color: #0d1117; /* Dark input background */
+            color: #00f0ff; /* Cyan text in input */
+            font-family: 'Roboto Mono', monospace;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.3); /* Subtle input glow */
+            outline: none;
+            transition: all 0.2s ease-in-out;
+        }
+        .search-bar input:focus {
+            border-color: #ff007f; /* Magenta on focus */
+            box-shadow: 0 0 8px rgba(255, 0, 127, 0.6); /* Stronger magenta glow on focus */
+        }
+        .header > div span {
+            color: #00ff00; /* Neon green for profile link */
+            text-decoration: none;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); /* Neon green glow */
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            gap: 25px;
+            max-width: 1400px;
+            margin: auto;
+        }
+        .left-sidebar, .right-sidebar {
+            width: 280px; /* Slightly wider sidebars */
+            background-color: #0d1117;
+            padding-top: 20px;
+        }
+        .main-feed {
+            width: 700px; /* Wider main feed */
+        }
+        .card {
+            background-color: #161b22; /* Dark card background */
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.3); /* Soft magenta card glow */
+            border: 1px solid #30363d; /* Subtle dark border */
+        }
+        .card h3 {
+            color: #00f0ff; /* Cyan headings */
+            border-bottom: 1px dashed #00f0ff;
+            padding-bottom: 8px;
+            margin-top: 0;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+        }
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .card ul li {
+            margin-bottom: 8px;
+        }
+        .card ul li a {
+            color: #c9d1d9; /* Light grey for links */
+            text-decoration: none;
+            transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+        }
+        .card ul li a:hover {
+            color: #00f0ff; /* Cyan on hover */
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+
+        /* Create Post Card */
+        .create-post textarea {
+            width: calc(100% - 20px); /* Adjust for padding */
+            border: 1px solid #ff007f; /* Magenta border */
+            background-color: #0d1117;
+            color: #00ff00; /* Neon green input text */
+            resize: vertical; /* Allow vertical resizing */
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(255, 0, 127, 0.4);
+            outline: none;
+            transition: all 0.2s ease-in-out;
+        }
+        .create-post textarea:focus {
+            border-color: #00f0ff; /* Cyan on focus */
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+        }
+        .create-post button {
+            background-color: #ff007f; /* Magenta button */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            margin-top: 15px;
+            font-family: 'Roboto Mono', monospace;
+            font-weight: bold;
+            box-shadow: 0 0 8px rgba(255, 0, 127, 0.7); /* Strong button glow */
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+        .create-post button:hover {
+            background-color: #e0006d; /* Darker magenta on hover */
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.9);
+        }
+
+        /* Post Card Styling */
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .post-header img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #00f0ff; /* Cyan border for avatars */
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+        .post-header .user-info a,
+        .user-info a:visited {
+            color: #00ff00; /* Force neon green for both normal and visited states */
+            text-decoration: none; /* Remove the underline */
+        }
+        .post-header .timestamp {
+            font-size: 11px;
+            color: #65676b; /* Subtler time */
+            margin-top: 2px;
+        }
+        .post-content p {
+            margin: 0 0 15px 0;
+        }
+        .post-content img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin-top: 10px;
+            border: 1px solid #30363d; /* Subtle image border */
+        }
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 15px;
+            margin-top: 10px;
+            border-top: 1px dashed #30363d; /* Dashed separator */
+        }
+        .post-actions span {
+            cursor: pointer;
+            color: #c9d1d9;
+            font-weight: bold;
+            transition: color 0.2s, text-shadow 0.2s;
+        }
+        .post-actions span:hover {
+            color: #ff007f; /* Magenta on hover */
+            text-shadow: 0 0 5px rgba(255, 0, 127, 0.5);
+        }
+
+        /* Specific elements for "Who to Follow" */
+        .card .follow-user {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .card .follow-user img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 1px solid #00f0ff;
+            box-shadow: 0 0 4px rgba(0, 240, 255, 0.3);
+        }
+        .card .follow-user span {
+            color: #c9d1d9;
+            font-weight: normal;
+        }
+
+        /* --- TOAST NOTIFICATION STYLES --- */
+        #toast-notification {
+            visibility: hidden; /* Hidden by default */
+            min-width: 250px;
+            background-color: #161b22;
+            color: #00ff00; /* Neon green text */
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 101;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            font-size: 17px;
+            border: 1px solid #00f0ff; /* Cyan border */
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); /* Cyan glow */
+        }
+
+        /* Class to show the toast */
+        #toast-notification.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the toast in and out */
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+    </style>
+    <script> _0x1343 = 'value' </script>
+</head>
+<body>
+
+    <header class="header">
+        <h1>/// CYBER-NEXUS ///</h1>
+        <div class="search-bar">
+            <input type="text" id="search-bar-input" placeholder="ACCESS DATASTREAM...">
+        </div>
+        <div>
+            <span >[USER 1]</span>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <aside class="left-sidebar">
+            <div class="card">
+                <h3>[ SYSTEM INTERFACE ]</h3>
+                <ul>
+                  <li><a href="#">HOME_FEED</a></li>
+                  <li><a id="user-profile-link" href="#">USER_PROFILE</a></li>
+                  <li><a id="settings-link" href="#">SETTINGS_CONFIG</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-feed">
+
+            <div class="card create-post">
+                <textarea id="create-post-textarea" rows="4" placeholder="DATA UPLOAD NOT PERMITTED FOR USER 1 (INSUFFICIENT PERMS)..."></textarea>
+                <button id="transmit-button">TRANSMIT</button>
+            </div>
+
+            <article class="card">
+                <div class="post-header">
+                    <img src="NeonDrifter_AD.png" />
+                    <div>
+                        <div class="user-info"><a href="NeonDrifter_AD.html">@NeonDrifter_AD</a></div>
+                        <div class="timestamp">CYCLE_11.08.01 @ 09:04z</div>
+                    </div>
+                </div><script> _0x3745 = 'FLFDGD LVQW WKLV ZHDN' </script>
+                <div class="post-content">
+                    <p>Just patched into the old grid for a memory run. The ancient cityscapes still hold a certain digital beauty, even in decay. Data streams were glitchy but worth the deep dive. #UrbanExploration #NeuralNet #OldTech</p>
+                    <img src="oldgrid.png" alt="Post Image">
+                </div>
+                <div class="post-actions">
+                    <span>/// REACT</span>
+                    <span>/// COMMENT</span>
+                    <span>/// RE-STREAM</span>
+                </div>
+            </article>
+            <script> _0x7363 = 'toUpperCase' </script>
+            <article class="card">
+                <div class="post-header">
+                    <img src="CodeSculptor_PS.png" />
+                    <div>
+                        <div class="user-info"><a href="CodeSculptor_PS.html">@CodeSculptor_PS</a></div>
+                        <div class="timestamp">CYCLE_05.04.01 @ 05:14z</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>My latest HTML-only framework for simulated neural networks. Raw, unoptimized, but functional. Proof that you don't always need advanced protocols to build something. #PureHTML #DevLogs #MinimalistCode</p>
+                </div>
+                <div class="post-actions">
+                    <span>/// REACT</span>
+                    <span>/// COMMENT</span>
+                    <span>/// RE-STREAM</span>
+                </div>
+            </article>
+
+             <article class="card">
+                <div class="post-header">
+                    <img src="SynthWhisperer_BC.png" />
+                    <div>
+                        <div class="user-info"><a href="SynthWhisperer_BC.html">@SynthWhisperer_BC</a></div>
+                        <div class="timestamp">CYCLE_09.02.01 @ 21:07z</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>New audio synthesis project reaching 80% completion. The aural landscapes I'm building will bend your perception of reality. Preparations for public data drop are underway. #SoundDesign #CyberArt #AuralFX</p>
+                </div>
+                <div class="post-actions">
+                    <span>/// REACT</span>
+                    <span>/// COMMENT</span>
+                    <span>/// RE-STREAM</span>
+                </div>
+            </article>
+
+        </main>
+
+        <aside class="right-sidebar">
+            <div class="card">
+                <h3>[ SYSTEM TRENDS ]</h3>
+                <ul>
+                    <li>#AugmentedReality</li>
+                    <li>#DecentralizedFinance</li>
+                    <li>#AIEthics</li>
+                </ul>
+            </div>
+        </aside>
+
+    </div>
+
+    <div id="toast-notification"></div>
+
+    <script>
+        const transmitButton = document.getElementById('transmit-button');
+        const searchInput = document.getElementById('search-bar-input');
+        const postTextarea = document.getElementById('create-post-textarea'); // Get the textarea
+        const toastElement = document.getElementById('toast-notification');
+        const userProfileLink = document.getElementById('user-profile-link');
+        const settingsLink = document.getElementById('settings-link');
+
+
+        function showToast(message) {
+            toastElement.textContent = message;
+            toastElement.className = "show";
+            setTimeout(function(){
+                toastElement.className = toastElement.className.replace("show", "");
+            }, 3000);
+        }
+
+        userProfileLink.addEventListener('click', function(event) {showToast("ACCESS DENIED");});
+        settingsLink.addEventListener('click', function(event) {showToast("ACCESS DENIED");});
+
+        (function(){const _0x1a2b=[_0x1224,_0x1343,_0x7363,_0x3745,'click'];transmitButton.addEventListener(_0x1a2b[4],function(){const _0x3c4d=postTextarea[_0x1a2b[1]][_0x1a2b[2]]();if(_0x3c4d===_0x1a2b[0]){showToast(_0x1a2b[3]);}});})();
+    </script>
+
+</body>
+</html>
