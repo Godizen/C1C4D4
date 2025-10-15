@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gridOS 0.9 Terminal</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #1a1a1a;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+        #terminal {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #output {
+            flex-grow: 1;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        #output .error { color: #ff4136; }
+        #output .directory { color: #87ceeb; }
+        .input-line { display: flex; }
+        .prompt { font-weight: bold; margin-right: 8px; white-space: nowrap; }
+        #command-input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: inherit;
+            font-size: 1em;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <div id="output"></div>
+        <div class="input-line">
+            <span class="prompt" id="prompt-span"></span>
+            <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const output = document.getElementById('output');
+            const commandInput = document.getElementById('command-input');
+            const promptSpan = document.getElementById('prompt-span');
+
+            let currentUser = "neon-drifter";
+            let currentPath = "/";
+            let isAuthenticated = false; // Authentication state
+
+            // SHA-256 hash of the password 'root'
+            const correctPasswordHash = "8b5fbbdbed223da8bbe4496b02f6f29130a1696ff668a1c5581136586c33e32a";
+
+            const filesystem = {
+                "bin": {
+                    type: "directory",
+                    children: {
+                        "bash": { type: "file", content: "IyEvYmluL2Jhc2hcbiMgR05VIEJvdXJuZS1BZ2FpbiBTSGVsbCwgdmVyc2lvbiA1LjIuMTUoMSktcmVsZWFzZQ==" },
+                        "cat": { type: "file", content: "IyEvYmluL3NoXG4jIENvbmNhdGVuYXRlIGZpbGUocykgdG8gc3RhbmRhcmQgb3V0cHV0Lg==" },
+                        "chmod": { type: "file", content: "IyEvYmluL3NoXG4jIENoYW5nZSBmaWxlIG1vZGUgYml0cy4=" },
+                        "cp": { type: "file", content: "IyEvYmluL3NoXG4jIENvcHkgZmlsZXMgYW5kIGRpcmVjdG9yaWVzLg==" },
+                        "date": { type: "file", content: "IyEvYmluL3NoXG4jIFByaW50IG9yIHNldCB0aGUgc3lzdGVtIGRhdGUgYW5kIHRpbWUu" },
+                        "echo": { type: "file", content: "IyEvYmluL3NoXG4jIFdyaXRlIGFyZ3VtZW50cyB0byB0aGUgc3RhbmRhcmQgb3V0cHV0Lg==" },
+                        "grep": { type: "file", content: "IyEvYmluL3NoXG4jIFByaW50IGxpbmVzIHRoYXQgbWF0Y2ggcGF0dGVybnMu" },
+                        "ls": { type: "file", content: "IyEvYmluL3NoXG4jIExpc3QgZGlyZWN0b3J5IGNvbnRlbnRzLg==" },
+                        "mkdir": { type: "file", content: "IyEvYmluL3NoXG4jIE1ha2UgZGlyZWN0b3JpZXMu" },
+                        "mv": { type: "file", content: "IyEvYmluL3NoXG4jIE1vdmUgKHJlbmFtZSkgZmlsZXMu" },
+                        "ps": { type: "file", content: "IyEvYmluL3NoXG4jIFJlcG9ydCBhIHNuYXBzaG90IG9mIHRoZSBjdXJyZW50IHByb2Nlc3Nlcy4=" },
+                        "pwd": { type: "file", content: "IyEvYmluL3NoXG4jIFByaW50IG5hbWUgb2YgY3VycmVudC93b3JraW5nIGRpcmVjdG9yeS4=" },
+                        "rm": { type: "file", content: "IyEvYmluL3NoXG4jIFJlbW92ZSBmaWxlcyBvciBkaXJlY3Rvcmllcy4=" },
+                        "sh": { type: "file", content: "IyEvYmluL3NoXG4jIFBPU0lYLWNvbXBsaWFudCBjb21tYW5kIGludGVycHJldGVyLg==" },
+                        "touch": { type: "file", content: "IyEvYmluL3NoXG4jIENoYW5nZSBmaWxlIHRpbWVzdGFtcHMu" },
+                    }
+                },
+                "sbin": {
+                    type: "directory",
+                    children: {
+                        "fdisk": { type: "file", content: "IyEvYmluL3NoXG4jIE1hbmlwdWxhdGUgZGlzayBwYXJ0aXRpb24gdGFibGUu" },
+                        "ifconfig": { type: "file", content: "IyEvYmluL3NoXG4jIENvbmZpZ3VyZSBhIG5ldHdvcmsgaW50ZXJmYWNlLg==" },
+                        "reboot": { type: "file", content: "IyEvYmluL3NoXG5lY2hvIFwiU3lzdGVtIGlzIGdvaW5nIGRvd24gZm9yIHJlYm9vdCBOT1chXCI=" },
+                        "shutdown": { type: "file", content: "IyEvYmluL3NoXG4jIEhhbHQsIHBvd2VyLW9mZiBvciByZWJvb3QgdGhlIG1hY2hpbmUu" },
+                    }
+                },
+                "etc": {
+                    type: "directory",
+                    children: {
+                        "fstab": { type: "file", content: "IyAvZXRjL2ZzdGFiOiBzdGF0aWMgZmlsZSBzeXN0ZW0gaW5mb3JtYXRpb24uXG4jXG4jIDxmaWxlIHN5c3RlbT4gPG1vdW50IHBvaW50PiAgIDx0eXBlPiAgPG9wdGlvbnM+ICAgICAgIDxkdW1wPiAgPHBhc3M+XG5VVUlEPTFBMkItM0M0RCAgLyAgICAgICAgICAgICAgIGV4dDQgICAgZXJyb3JzPXJlbW91bnQtcm8gMCAgICAgICAx" },
+                        "group": { type: "file", content: "cm9vdDp4OjA6XG5kYWVtb246eDoxOlxuYmluOng6MjpcbnN5czp4OjM6XG53d3ctZGF0YTp4OjMzOlxubmVvbi1kcmlmdGVyOng6MTAwMDo=" },
+                        "hostname": { type: "file", content: "Z3JpZC1ub2RlLTA3" },
+                        "hosts": { type: "file", content: "MTI3LjAuMC4xXHRsb2NhbGhvc3Rcbjo6MVx0XHRsb2NhbGhvc3QgaXA2LWxvY2FsaG9zdCBpcDYtbG9vcGJhY2tcbjE5Mi4xNjguMS4xMFx0Z3JpZC1zZWN0b3ItMDc=" },
+                        "issue": { type: "file", content: "R3JpZCAwLjkgUmVjb3ZlcnkgTW9kZSBcXG4gXFxs" },
+                        "motd": { type: "file", content: "XG5XZWxjb21lIHRvIHRoZSBHcmlkLiBBbGwgc3lzdGVtcyBub21pbmFsLlxuKiBTeXN0ZW0gaW5mb3JtYXRpb24gYXMgb2Y6IEZyaSBPY3QgMTYgMjA5OSAxNzoxMTozMiBHTVQrMDUzMCAoSW5kaWEgU3RhbmRhcmQgVGltZSlcbg==" },
+                        "passwd": { type: "file", content: "cm9vdDp4OjA6MDpyb290Oi9yb290Oi9iaW4vYmFzaFxuZGFlbW9uOng6MToxOmRhZW1vbjovdXNyL3NiaW46L3Vzci9zYmluL25vbG9naW5cbmJpbjp4OjI6MjpiaW46L2JpbjovdXNyL3NiaW4vbm9sb2dpblxuc3lzOng6MzozOnN5czovZGV2Oi91c3Ivc2Jpbi9ub2xvZ2luXG5uZW9uLWRyaWZ0ZXI6eDoxMDAwOjEwMDA6TmVvbiBEcmlmdGVyLCwsOi9ob21lL25lb24tZHJpZnRlcjovYmluL2Jhc2g=" },
+                        "resolv.conf": { type: "file", content: "IyBHZW5lcmF0ZWQgYnkgTmV0d29ya01hbmFnZXJcbm5hbWVzZXJ2ZXIgMS4xLjEuMVxubmFtZXNlcnZlciA4LjguOC44" },
+                        "shadow": { type: "file", content: "cm9vdDoqOjE5OTkyOjA6OTk5OTk6Nzo6OlxubmVvbi1kcmlmdGVyLXNjcnlwdC1GTEFHOiQ2JDhhMWY5YjIwZTdkM2M0YTViNmY4ZTlkMGExYjJjM2Q0JDg5Nzk4NTBCMUI2RkU0MzBDMzE3RjI0MzUyNEMyMkI3MTI2NUUwMThERTZEOUE4OTc2Rjk0RkMzRjk4MjE3OEFCMzdDMEM0MzQ5QzQzQTkzOUIyNDFGM0E2N0RFNEEwOUIzMTZGQ0M4QzVGNTVEOUIyNzVBMTI3NTI4Q0Y1NzdGNzlEMzRFNzI4NDc5NUI4Q0Q5NTBFN0EzRDMxMUJDM0FBRTY0MzY5QkIxNUMzQzFBM0VDMUEzNzhBNTI0NEZCMjk5OURBRjE2RTUyNjUwRTg5MjcxOEU1QUQ1NTE4RkYyNEVBRjRDQTIzQkNBQThEODA2ODM5NjYyMjIxNTMzNDNENDE2N0VDRTY4MEExNzMyNTJBOEEyMzYxNTk1RDlCRToxOTk5MjowOjk5OTk5Ojc6Ojo=", isHidden: true },
+                        "sudoers": { type: "file", content: "IyBUaGlzIGZpbGUgTVVTVCBiZSBlZGl0ZWQgd2l0aCB0aGUgJ3Zpc3VkbycgY29tbWFuZCBhcyByb290Llxucm9vdFx0QUxMPShBTEw6QUxMKSBBTExcbiVhZG1pbiBBTEw9KEFMTCkgQUxM", isHidden: true },
+                        "ssh": {
+                            type: "directory",
+                            children: {
+                                "sshd_config": { type: "file", content: "IyBTU0ggc2VydmVyIGNvbmZpZ3VyYXRpb25cblxuUG9ydCAyMlxuUGVybWl0Um9vdExvZ2luIHByb2hpYml0LXBhc3N3b3JkXG5QYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllc1xuQ2hhbGxlbmdlUmVzcG9uc2VBdXRoZW50aWNhdGlvbiBub1xuVXNlUEFNIHllc1xu" },
+                            }
+                        },
+                    }
+                },
+                "home": {
+                    type: "directory",
+                    children: {
+                        "neon-drifter": {
+                            type: "directory",
+                            children: {
+                                ".bash_history": { type: "file", content: "bHMgLWxhIC9ldGNcbmNhdCBEb2N1bWVudHMvbWVldGluZ19ub3Rlcy5tZFxuY2Qgc3JjL3JlY29nbml6ZXItc2ltXG5tYWtl", isHidden: true },
+                                ".bashrc": { type: "file", content: "YWxpYXMgbGw9J2xzIC1hbEYnXG5hbGlhcyBsYT0nbHMgLUEnXG5hbGlhcyBsPSdscyAtQ0YnXG5cbmV4cG9ydCBQUzE9J1xcdUBcXGg6XFx3XFwkICc=", isHidden: true },
+                                ".gitconfig": { type: "file", content: "W3VzZXJdXG5cdG5hbWUgPSBOZW9uIERyaWZ0ZXJcblx0ZW1haWwgPSBuZW9uQHRoZWdyaWQubmV0XG5bY29yZV1cblx0ZWRpdG9yID0gdmlt", isHidden: true },
+                                ".profile": { type: "file", content: "IyB+Ly5wcm9maWxlOiBleGVjdXRlZCBieSB0aGUgY29tbWFuZCBpbnRlcnByZXRlciBmb3IgbG9naW4gc2hlbGxzLlxuaWYgWyAtbiBcIiRCQVNIX1ZFUlNJT05cIiBdOyB0aGVuXG4gICAgaWYgWyAtZiBcIiRIT01FLy5iYXNocmNcIiBdOyB0aGVuXG4gICAgICAgIC4gXCIkSE9NRS8uYmFzaHJjXCJcbiAgICBmaVxuZmlcbg==", isHidden: true },
+                                ".vimrc": { type: "file", content: "c2V0IG51bWJlclxuc3ludGF4IG9uXG5zZXQgdGFic3RvcD00", isHidden: true },
+                                ".ssh": {
+                                    type: "directory",
+                                    children: {
+                                        "authorized_keys": { type: "file", content: "c3NoLUZMQUcgNDMgNDEgNGUgNTQgMjAgNTQgNGYgNTUgNDMgNDggMjAgNTQgNDggNDkgNTMgbmVvbkB0aGVncmlkLm5ldA==" },
+                                        "known_hosts": { type: "file", content: "fDF8Li4ufC4uLiBzc2gtZWQyNTUxOSBBQUEuLi4=" },
+                                    },
+                                    isHidden: true
+                                },
+                                "Documents": {
+                                    type: "directory",
+                                    children: {
+                                    }
+                                },
+                                "Downloads": {
+                                    type: "directory",
+                                    children: {
+                                        "dataslate-v3.pdf": { type: "file", content: "W0VOQ09NIENPTkZJREVOVElBTCAtIFBERiBEQVRBXQ==" }
+                                    }
+                                },
+                                "src": {
+                                    type: "directory",
+                                    children: {
+                                        "recognizer-sim": {
+                                            type: "directory",
+                                            children: {
+                                                "main.c": { type: "file", content: "I2luY2x1ZGUgPHN0ZGlvLmg+XG5cbmludCBtYWluKHZvaWQpIHtcbiAgICBwcmludGYoXCJSZWNvZ25pemVyIHNpbXVsYXRpb24gc3RhcnRpbmcuLi5cXG5cIik7XG4gICAgLy8gVE9ETzogSW1wbGVtZW50IHBhdHJvbCBsb2dpY1xuICAgIHJldHVybiAwO1xufQ==" },
+                                                "Makefile": { type: "file", content: "Q0M9Z2NjXG5DRkxBR1M9LUkuXG5ERVBTID0gcmVjb2duaXplci5oXG5cbmFsbDogbWFpbg==" },
+                                                "README.md": { type: "file", content: "IyBSZWNvZ25pemVyIFNpbXVsYXRvclxuU2ltdWxhdGlvbiBvZiBSZWNvZ25pemVyIHBhdHJvbCByb3V0ZXMgYW5kIGxvZ2ljLiBGb3IgaW50ZXJuYWwgRU5DT00gdXNlIG9ubHku" }
+                                            }
+                                        }
+                                    }
+                                },
+                            }
+                        }
+                    }
+                },
+                "root": {
+                    type: "directory",
+                    children: {
+                        ".bash_history": { type: "file", content: "ZG1lc2cgfCBncmVwIGVycm9yXG5yZWJvb3RcbmZzY2sgL2Rldi9zZGEx", isHidden: true },
+                        ".viminfo": { type: "file", content: "IyBWaW0gc2Vzc2lvbiBpbmZv", isHidden: true },
+                        "install.log": { type: "file", content: "SW5zdGFsbGF0aW9uIG9mIGNvcmUgc3lzdGVtIHBhY2thZ2VzIGNvbXBsZXRlZCBzdWNjZXNzZnVsbHku" },
+                        "patch-system.sh": { type: "file", content: "IyEvYmluL3NoXG5cbmVjaG8gJ0FwcGx5aW5nIGNyaXRpY2FsIHNlY3VyaXR5IHBhdGNoZXMuLi4nXG5hcHQtZ2V0IHVwZGF0ZSAmJiBhcHQtZ2V0IHVwZ3JhZGUgLXlcbmVjaG8gJ0RvbmUuJw==" }
+                    }
+                },
+                "var": {
+                    type: "directory",
+                    children: {
+                        "log": {
+                            type: "directory",
+                            children: {
+                                "syslog": { type: "file", content: "T2N0IDE2IDE2OjQ3OjAxIGdyaWQtbm9kZS0wMSBrZXJuZWw6IGZ1bGwgZ3JpZCByZWJvb3QgdW5zdWNjZXNzZnVsLCBib290ZWQgaW4gcmVjb3ZlcnkgbW9kZVxuT2N0IDE2IDE2OjQ3OjA1IGdyaWQtbm9kZS0wMSBzeXN0ZW1kWzFdOiBTdGFydGVkIE5ldHdvcmsgTWFuYWdlci5cbk9jdCAxNiAxNzoxMDowMSBncmlkLW5vZGUtMDEgQ1JPTlsyNTAxXTogKHJvb3QpIENNRCAoICAgY2QgLyAmJiBydW4tcGFydHMgLS1yZXBvcnQgL2V0Yy9jcm9uLmhvdXJseSk=" },
+                                "auth.log": { type: "file", content: "T2N0IDE2IDE2OjQ4OjEyIGdyaWQtbm9kZS0wMSBzc2hkWzEzMzddOiBBY2NlcHRlZCBwYXNzd29yZCBmb3IgbmVvbi1kcmlmdGVyIGZyb20gMTkyLjE2OC4xLjEwMCBwb3J0IDUxNTAgc3NoMlxuT2N0IDE2IDE3OjAxOjAxIGdyaWQtbm9kZS0wMSBDUk9OWzI0OTldOiBwYW1fdW5peChjcm9uOnNlc3Npb24pOiBzZXNzaW9uIG9wZW5lZCBmb3IgdXNlciBuZW9uLWRyaWZ0ZXI=" },
+                                "kern.log": { type: "file", content: "T2N0IDE2IDE2OjQ3OjAwIGdyaWQtbm9kZS0wMSBrZXJuZWw6IFsgICAgMC4wMDAwMDBdIExpbnV4IHZlcnNpb24gNi41LjAtMTAtRkxBRyAoQUIgQ1lOUFIgVkEgR1VSIFFORVggSlJPKQ=="},
+                                "dpkg.log": { type: "file", content: "MjA5OS0xMC0xNiAxNjo0MDowMCBzdGF0dXMgaW5zdGFsbGVkIGxpYmM2OmFtZDY0IDIuMzUtMGdyaWRPUzAuOQ==", isHidden: true },
+                            }
+                        },
+                        "www": {
+                            type: "directory",
+                            children: {
+                                "html": {
+                                    type: "directory",
+                                    children: {
+                                        "index.html": { type: "file", content: "YWNjZXNzIGRlbmllZA==" }
+                                    }
+                                }
+                            }
+                        },
+                        "cache": { type: "directory", children: {} },
+                        "lib": { type: "directory", children: {} },
+                        "spool": { type: "directory", children: {} },
+                    }
+                },
+                "dev": {
+                    type: "directory",
+                    children: {
+                        "null": { type: "file", content: "" },
+                        "zero": { type: "file", content: "" },
+                        "random": { type: "file", content: "W2JpbmFyeSBzdHJlYW1d" },
+                        "tty": { type: "file", content: "W2NoYXJhY3RlciBkZXZpY2Vd" },
+                        "sda": { type: "file", content: "W2Jsb2NrIGRldmljZV0=" },
+                        "sda1": { type: "file", content: "W2Jsb2NrIGRldmljZSBwYXJ0aXRpb24gMV0=" },
+                    }
+                },
+                "proc": {
+                    type: "directory",
+                    children: {
+                        "version": { type: "file", content: "TGludXggdmVyc2lvbiA2LjUuMC0xMC1nZW5lcmljIChHcmlkT1Mp" },
+                        "meminfo": { type: "file", content: "TWVtVG90YWw6ICAgICAgIDE2Mzg0MDAwIEdCXG5NZW1GcmVlOiAgICAgICAgIDgxOTIwMDAgR0Jcbk1lbUF2YWlsYWJsZTogICAxMjI4ODAwMCBHQlxuQnVmZmVyczogICAgICAgICAgMjU2MDAwIEdCXG5DYWNoZWQ6ICAgICAgICAgIDQwOTYwMDAgR0I=" },
+                        "cpuinfo": { type: "file", content: "cHJvY2Vzc29yXHQ6IDBcbnZlbmRvcl9pZFx0OiBHZW51aW5lR3JpZFxubW9kZWwgbmFtZVx0OiBHcmlkIENQVSBAIDQuMDBUSHpcbmNvcmUgaWRcdFx0OiAwXG5jcHUgY29yZXNcdDogODE5Mg==" },
+                        "uptime": { type: "file", content: "MzYwMC4wMCA3MjAwLjAw" },
+                    },
+                    isHidden: true
+                },
+                "usr": {
+                    type: "directory",
+                    children: {
+                        "bin": { type: "directory", children: {} },
+                        "lib": { type: "directory", children: {} },
+                        "local": { type: "directory", children: { "bin": { type: "directory", children: {} } } },
+                        "share": { type: "directory", children: { "doc": { type: "directory", children: {} }, "man": { type: "directory", children: {} } } },
+                    }
+                },
+                "tmp": { type: "directory", children: {} },
+                "mnt": { type: "directory", children: {} },
+                "media": { type: "directory", children: {} },
+                "opt": { type: "directory", children: {} },
+                "lib": { type: "directory", children: {} },
+                "lib64": { type: "directory", children: {} },
+                "server.sh": { type: "file", content: "Y2QgLyAmJiBweXRob24zIC1tIGh0dHAuc2VydmVy"}
+            };
+
+            // SHA-256 Hashing Function using Web Crypto API
+            async function sha256(message) {
+                const msgBuffer = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            function decodeUnicode(string) {
+            const binaryString = atob(string);
+
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+
+            return new TextDecoder().decode(bytes);
+            }
+
+            const resolvePath = (path) => {
+                let parts = path.startsWith('/') ? [] : currentPath.split('/').filter(Boolean);
+                const pathParts = path.split('/').filter(Boolean);
+                for (const part of pathParts) {
+                    if (part === '.') continue;
+                    if (part === '..') { if (parts.length > 0) parts.pop(); }
+                    else { parts.push(part); }
+                }
+                return '/' + parts.join('/');
+            };
+            const getNode = (path) => {
+                const resolved = resolvePath(path);
+                if (resolved === '/') return { type: 'directory', children: filesystem };
+                let parts = resolved.split('/').filter(Boolean);
+                let currentNode = filesystem;
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+                    if (currentNode && currentNode[part]) {
+                        if (i === parts.length - 1) return currentNode[part];
+                        currentNode = currentNode[part].children;
+                    } else { return null; }
+                }
+                return null;
+            };
+
+            const updatePrompt = () => {
+                if (!isAuthenticated) {
+                    promptSpan.textContent = "[sudo] password for neon-drifter:";
+                    return;
+                }
+                const displayPath = (currentPath === '/root') ? '~' : currentPath;
+                promptSpan.textContent = `neon-drifter@grid-node-01:${displayPath}#`;
+            };
+
+            const printToOutput = (text, className = '') => {
+                const line = document.createElement('div');
+                if (className) line.className = className;
+                line.innerHTML = text.replace(/ /g, '&nbsp;');
+                output.appendChild(line);
+                output.scrollTop = output.scrollHeight;
+            };
+
+            const commands = {
+                help: () => printToOutput("Available commands: help, clear, pwd, ls (use 'ls -a' to list hidden files), cd, cat, whoami"),
+                clear: () => output.innerHTML = '',
+                pwd: () => printToOutput(currentPath),
+                whoami: () => printToOutput(currentUser),
+                ls: (args) => {
+                    const showAll = args.includes("-a");
+                    const path = args.find(arg => !arg.startsWith('-')) || '.';
+                    const node = getNode(path);
+                    if (!node || node.type !== 'directory') return printToOutput(`ls: ${path}: No such file or directory`, 'error');
+                    let entries = Object.keys(node.children).sort();
+                    if (!showAll) {
+                        entries = entries.filter(entry => !node.children[entry].isHidden);
+                    }
+                    if (entries.length === 0) return;
+                    let outputStr = "";
+                    entries.forEach(entry => {
+                       const item = node.children[entry];
+                       outputStr += item.type === 'directory' ? `<span class="directory">${entry}/</span> ` : `${entry} `;
+                    });
+                    printToOutput(outputStr);
+                },
+                cat: (args) => {
+                    if (!args[0]) return printToOutput('cat: missing operand', 'error');
+                    const node = getNode(args[0]);
+                    if (!node) return printToOutput(`cat: ${args[0]}: No such file or directory`, 'error');
+                    if (node.type === 'directory') return printToOutput(`cat: ${args[0]}: Is a directory`, 'error');
+                    printToOutput(decodeUnicode(node.content));
+                },
+                cd: (args) => {
+                    let path = args[0] || `/home/${currentUser}`;
+                    if (currentUser === 'root' && !args[0]) path = '/root';
+                    if (path === '~') path = (currentUser === 'root') ? '/root' : `/home/${currentUser}`;
+                    const node = getNode(path);
+                    if (node && node.type === 'directory') {
+                        currentPath = resolvePath(path);
+                    } else {
+                        printToOutput(`cd: ${path}: No such file or directory`, 'error');
+                    }
+                }
+            };
+
+            // Main input handler with authentication logic
+            commandInput.addEventListener('keydown', async (e) => {
+                if (e.key !== 'Enter') return;
+
+                const inputValue = commandInput.value.trim();
+                commandInput.value = '';
+
+                if (!isAuthenticated) {
+                    const inputHash = await sha256(inputValue);
+                    if (inputHash === correctPasswordHash) {
+                        isAuthenticated = true;
+                        commandInput.type = 'text'; // Change input back to text
+                        output.innerHTML = ''; // Clear the login attempts
+                        printToOutput("Authentication successful. Welcome neon-drifter.");
+                    } else {
+                        printToOutput("Sorry, try again. Hint: We may bend, we may break, but we wont give up. Who are we?");
+                    }
+                } else {
+                    const [command, ...args] = inputValue.split(/\s+/);
+                    printToOutput(`${promptSpan.textContent} ${inputValue}`);
+                    if (commands[command]) {
+                        commands[command](args);
+                    } else if (command) {
+                        printToOutput(`${command}: command not found`, 'error');
+                    }
+                }
+                updatePrompt();
+            });
+
+            function startTerminal() {
+                commandInput.type = 'password'; // Start with masked input
+                updatePrompt();
+            }
+
+            startTerminal();
+        });
+    </script>
+</body>
+</html>

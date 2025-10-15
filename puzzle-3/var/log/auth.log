@@ -1,0 +1,1 @@
+Oct 16 16:48:12 grid-node-01 sshd[1337]: Accepted password for neon-drifter from 192.168.1.100 port 5150 ssh2\nOct 16 17:01:01 grid-node-01 CRON[2499]: pam_unix(cron:session): session opened for user neon-drifter

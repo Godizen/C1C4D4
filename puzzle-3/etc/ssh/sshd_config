@@ -1,0 +1,1 @@
+# SSH server configuration\n\nPort 22\nPermitRootLogin prohibit-password\nPasswordAuthentication yes\nChallengeResponseAuthentication no\nUsePAM yes\n

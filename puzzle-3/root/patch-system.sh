@@ -1,0 +1,1 @@
+#!/bin/sh\n\necho 'Applying critical security patches...'\napt-get update && apt-get upgrade -y\necho 'Done.'

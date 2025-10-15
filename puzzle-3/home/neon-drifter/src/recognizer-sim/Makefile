@@ -1,0 +1,1 @@
+CC=gcc\nCFLAGS=-I.\nDEPS = recognizer.h\n\nall: main

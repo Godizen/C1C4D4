@@ -1,0 +1,1 @@
+#include <stdio.h>\n\nint main(void) {\n    printf(\"Recognizer simulation starting...\\n\");\n    // TODO: Implement patrol logic\n    return 0;\n}

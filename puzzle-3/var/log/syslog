@@ -1,0 +1,1 @@
+Oct 16 16:47:01 grid-node-01 kernel: full grid reboot unsuccessful, booted in recovery mode\nOct 16 16:47:05 grid-node-01 systemd[1]: Started Network Manager.\nOct 16 17:10:01 grid-node-01 CRON[2501]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)

@@ -1,0 +1,1 @@
+# This file MUST be edited with the 'visudo' command as root.\nroot\tALL=(ALL:ALL) ALL\n%admin ALL=(ALL) ALL

@@ -1,0 +1,1 @@
+#!/bin/sh\necho \"System is going down for reboot NOW!\"
